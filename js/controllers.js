@@ -477,8 +477,8 @@ squeezefox.controller('FavoritesCtrl', ['$scope', function ($scope) {
 }]);
 
 squeezefox.controller('SyncCtrl', ['$scope', function ($scope) {
-  $scope.syncgroups = [];
-  $scope.syncgroup = [];
+  $scope.syncgroups = {};
+  $scope.syncgroup = {};
   $scope.playersSyncs = [];
   localforage.getItem("players", function (players) {
     $scope.playersSyncs = players || [];
@@ -487,8 +487,18 @@ squeezefox.controller('SyncCtrl', ['$scope', function ($scope) {
   function loadSyncgroups(){
     triedsyncgroups = true;
     $scope.JSONRPC({"id":1,"method":"slim.request","params": ["",["serverstatus",0,999]]}, function(xhr) {
-        $scope.syncgroups = xhr.response.result.players_loop;
+        $scope.playersSyncs = xhr.response.result.players_loop;
         localforage.setItem("players", xhr.response.result.players_loop);
+      });
+
+   
+  }
+
+  function getCurrentSyncs(){
+     $scope.JSONRPC({"id":1,"method":"slim.request","params":["",["syncgroups","?"]]}, function(xhr) {
+        $scope.syncgroups = xhr.response.result;
+        console.log("groups",xhr.response.result);
+        //localforage.setItem("players", xhr.response.result.players_loop);
       });
   }
   var triedsyncgroups = false;

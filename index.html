@@ -212,12 +212,12 @@
         <div id="window-sync" ng-class="CSS_window('sync')" ng-controller="SyncCtrl">
           <section data-type="list">
             <header>Sync</header>
-            <ul ng-show="syncgroups">
-              <li ng-repeat="player in syncgroups">
-                <label>{{player.name}}<input type="checkbox" ng-model="syncgroup[player.id]" ng-change="setSyncGroups()"/></label>
+            <ul ng-show="playersSyncs">
+              <li ng-repeat="player in playersSyncs">
+                <label>{{player.name}}<input type="checkbox" ng-model="syncgroup[player.playerid]" ng-change="setSyncGroups()"/></label>
               </li>
             </ul>
-            <div ng-hide="syncgroups">
+            <div ng-hide="playersSyncs">
               <p>Did not find any players.</p>
               <button ng-click="loadSyncGroups()">Retry</button>
             </div>
