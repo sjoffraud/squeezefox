@@ -480,15 +480,15 @@ squeezefox.controller('SyncCtrl', ['$scope', function ($scope) {
   $scope.syncgroups = [];
   $scope.syncgroup = [];
   $scope.playersSyncs = [];
-  localforage.getItem("syncgroups", function (cachedSyncgroups) {
-    $scope.syncgroups = cachedSyncgroups || [];
+  localforage.getItem("players", function (players) {
+    $scope.playersSyncs = players || [];
   });
 
   function loadSyncgroups(){
     triedsyncgroups = true;
     $scope.JSONRPC({"id":1,"method":"slim.request","params": ["",["serverstatus",0,999]]}, function(xhr) {
         $scope.syncgroups = xhr.response.result.players_loop;
-        localforage.setItem("syncgroups", xhr.response.result.players_loop);
+        localforage.setItem("players", xhr.response.result.players_loop);
       });
   }
   var triedsyncgroups = false;
