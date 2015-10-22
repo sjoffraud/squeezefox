@@ -47,6 +47,7 @@
           <li><a href="#content" ng-click="changeWindow('play')">Playing</a></li>
           <li><a href="#content" ng-click="changeWindow('music')">Search</a></li>
           <li><a href="#content" ng-click="changeWindow('favorites')">Favorites</a></li>
+          <li><a href="#content" ng-click="changeWindow('sync')">Sync</a></li>
           <li><a href="#content" ng-click="changeWindow('settings')">Settings</a></li>
         </ul>
       </nav>
@@ -204,6 +205,21 @@
             <div ng-hide="favorites">
               <p>Did not find any favorites.</p>
               <button ng-click="loadFavorites()">Retry</button>
+            </div>
+          </section>
+        </div>
+
+        <div id="window-sync" ng-class="CSS_window('sync')" ng-controller="SyncCtrl">
+          <section data-type="list">
+            <header>Sync</header>
+            <ul ng-show="syncgroups">
+              <li ng-repeat="player in syncgroups">
+                <label>{{player.name}}<input type="checkbox" ng-model="syncgroup[player.id]" ng-change="setSyncGroups()"/></label>
+              </li>
+            </ul>
+            <div ng-hide="syncgroups">
+              <p>Did not find any players.</p>
+              <button ng-click="loadSyncGroups()">Retry</button>
             </div>
           </section>
         </div>

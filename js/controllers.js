@@ -149,7 +149,7 @@ squeezefox.controller('WindowCtrl', ['$scope', function ($scope) {
   }
 
   $scope.changeWindow = function changeWindow(name) {
-    if (['play', 'music', 'favorites', 'settings'].indexOf(name) !== -1) {
+    if (['play', 'music', 'favorites', 'settings','sync'].indexOf(name) !== -1) {
       $scope.current_window = name;
     }
   };
@@ -294,10 +294,11 @@ squeezefox.controller('PlayerStatusCtrl', ['$scope', '$interval', function ($sco
 squeezefox.controller('MusicSearchCtrl', ['$scope', function ($scope) {
   $scope.searchterm = "";
   $scope.searchresults = {};
-  $scope.searchdetails = { 'tracks': {},
+  $scope.searchdetails = { 
+  'tracks': {},
   'albums': {},
   'contributors': {}
-};
+  };
 $scope.showTrackDialog = false;
 $scope.dialogItem = {};
 $scope.noresults = { 'tracks': true, 'albums': true, 'contributors': true };
@@ -473,6 +474,32 @@ squeezefox.controller('FavoritesCtrl', ['$scope', function ($scope) {
   x.send();
 
 }
+}]);
+
+squeezefox.controller('SyncCtrl', ['$scope', function ($scope) {
+  $scope.syncgroups = [];
+  $scope.syncgroup = [];
+  $scope.playersSyncs = [];
+  localforage.getItem("syncgroups", function (cachedSyncgroups) {
+    $scope.syncgroups = cachedSyncgroups || [];
+  });
+
+  function loadSyncgroups(){
+    triedsyncgroups = true;
+    $scope.JSONRPC({"id":1,"method":"slim.request","params": ["",["serverstatus",0,999]]}, function(xhr) {
+        $scope.syncgroups = xhr.response.result.players_loop;
+        localforage.setItem("syncgroups", xhr.response.result.players_loop);
+      });
+  }
+  var triedsyncgroups = false;
+  if (triedsyncgroups == false) {
+    loadSyncgroups();
+  }
+  $scope.loadSyncGroups = loadSyncgroups;
+  $scope.setSyncGroups = function setSyncGroups() {
+    console.log($scope.syncgroups,$scope.syncgroup, $scope.playersSyncs);
+    
+  };
 }]);
 
 squeezefox.controller('SettingsCtrl', ['$scope', function ($scope) {
