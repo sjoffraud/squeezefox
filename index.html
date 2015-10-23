@@ -59,7 +59,9 @@
         <menu type="toolbar">
           <button ng-class="CSS_Power()"ng-click="powerToggle()"><i class="fa fa-power-off"></i></button>
         </menu>
-        <h1>{{ windowTitle(current_window) }}</h1>
+        <h1 ng-if="current_window !== 'play'">{{ windowTitle(current_window) }}</h1>
+        <span class="playerPlaySelector"><select ng-if="current_window === 'play'" ng-model="$parent.selectedPlayer" ng-options="player.name for player in players">
+                </select></span>
       </header>
       <div role="main" id="main">
         <div id="window-play" ng-class="CSS_window('play')"  ng-controller="PlayerStatusCtrl">
