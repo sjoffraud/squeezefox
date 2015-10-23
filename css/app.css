@@ -35,6 +35,13 @@ section[role="region"] > header:first-child {
   text-transform: capitalize;
 }
 
+div.refresh{
+  position: fixed;
+  bottom: 0;
+  right:0;
+  z-index:10000;
+}
+
 
 /* override drawer style and stuff
  * this allows scrolling below drawer, while

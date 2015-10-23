@@ -462,6 +462,10 @@ squeezefox.controller('FavoritesCtrl', ['$scope', function ($scope) {
       });
     }
   };
+
+  $scope.refresh = function(){
+    $scope.loadFavorites();
+  };
   $scope.playFavorite = function playFavorite(id) {
     $scope.JSONRPC({"id":1,"method":"slim.request","params": [$scope.selectedPlayer.playerid, ["favorites","playlist","play","item_id:"+id]]});
   };
