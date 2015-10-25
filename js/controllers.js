@@ -8,7 +8,7 @@ var squeezefox = angular.module('Squeezefox', ['ngAnimate'])
   }
 ]);
 
-squeezefox.controller('WindowCtrl', ['$scope', function ($scope) {
+squeezefox.controller('WindowCtrl', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
   $scope.players = [];
   $scope.selectedPlayer = {playerid: "",
@@ -36,6 +36,7 @@ squeezefox.controller('WindowCtrl', ['$scope', function ($scope) {
       for (var i = 0; i < $scope.players.length; i++) {
         if ($scope.players[i].playerid == cachedSelectedPlayer.playerid) {
           $scope.selectedPlayer = $scope.players[i];
+          $rootScope.$broadcast('PlayerSelected');
           return;
         }
       }
@@ -480,37 +481,86 @@ squeezefox.controller('FavoritesCtrl', ['$scope', function ($scope) {
 }
 }]);
 
-squeezefox.controller('SyncCtrl', ['$scope', function ($scope) {
+squeezefox.controller('SyncCtrl', ['$scope', '$rootScope' , function ($scope, $rootScope) {
   $scope.syncgroups = {};
   $scope.syncgroup = {};
   $scope.playersSyncs = [];
+
   localforage.getItem("players", function (players) {
     $scope.playersSyncs = players || [];
   });
 
   function loadSyncgroups(){
-    triedsyncgroups = true;
     $scope.JSONRPC({"id":1,"method":"slim.request","params": ["",["serverstatus",0,999]]}, function(xhr) {
         $scope.playersSyncs = xhr.response.result.players_loop;
         localforage.setItem("players", xhr.response.result.players_loop);
       });
-
-   
   }
 
-  function getCurrentSyncs(){
+  function loadCurrentSyncs(){
+    $scope.syncgroup = {};
      $scope.JSONRPC({"id":1,"method":"slim.request","params":["",["syncgroups","?"]]}, function(xhr) {
-        $scope.syncgroups = xhr.response.result;
-        console.log("groups",xhr.response.result);
-        //localforage.setItem("players", xhr.response.result.players_loop);
+        if(xhr.response.result.syncgroups_loop && xhr.response.result.syncgroups_loop.length){
+          var firstGroup = xhr.response.result.syncgroups_loop.pop();
+          var members = firstGroup.sync_members.split(',');
+          $scope.syncgroup = {};
+          for(var i in members){
+            $scope.syncgroup[members[i]] = true;
+          }
+          
+        }
       });
   }
-  var triedsyncgroups = false;
-  if (triedsyncgroups == false) {
-    loadSyncgroups();
+
+  //Remove a player from sync
+  function removeSync(playerId){
+    console.log('removeSync');
+    //{"id":1,"method":"slim.request","params":["d0:63:b4:00:23:cf",["sync","-"]]}
+    $scope.JSONRPC({"id":1,"method":"slim.request","params":[playerId,["sync","-"]]}, function(xhr) {
+       console.log(xhr.response); 
+    });
   }
-  $scope.loadSyncGroups = loadSyncgroups;
-  $scope.setSyncGroups = function setSyncGroups() {
+
+  //Sync 2 players
+  function addSync(playerId, playerDestId){
+    console.log('addSync');
+    $scope.JSONRPC({"id":1,"method":"slim.request","params":[playerId,["sync",playerDestId]]}, function(xhr) {
+       console.log(xhr.response); 
+    });
+  }
+
+
+  $rootScope.$on('PlayerSelected',function(){
+    $scope.refresh();
+  });
+
+  $scope.refresh = function(){
+    loadSyncgroups();
+    loadCurrentSyncs();
+  };
+
+  $scope.setSyncGroups = function setSyncGroups(playerId) {
+    var playerDestId;
+    var playersToSync = [];
+    //Create playersToSync array
+    angular.forEach($scope.syncgroup,function(e,k){
+      if(e){
+        playersToSync.push(k);
+      }
+    });
+    if(playersToSync.length > 1){
+      for(var i in playersToSync){
+        if(playerDestId){
+          //Add sync
+          addSync(playersToSync[i], playerDestId);
+        }
+        playerDestId = playersToSync[i];
+      }
+    }
+    if(playersToSync.indexOf(playerId) !== -1){
+      //Remove
+      removeSync(playerId);
+    }
     console.log($scope.syncgroups,$scope.syncgroup, $scope.playersSyncs);
     
   };

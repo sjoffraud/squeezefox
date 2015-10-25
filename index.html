@@ -222,8 +222,9 @@
             </ul>
             <div ng-hide="playersSyncs">
               <p>Did not find any players.</p>
-              <button ng-click="loadSyncGroups()">Retry</button>
+              <button ng-click="refresh()">Retry</button>
             </div>
+            <div class="refresh"><button ng-click="refresh()"><i class="fa fa-refresh"></i></button></div>
           </section>
         </div>
         <div id="window-settings" ng-class="CSS_window('settings')" ng-controller="SettingsCtrl">
