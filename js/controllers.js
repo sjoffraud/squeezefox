@@ -514,18 +514,16 @@ squeezefox.controller('SyncCtrl', ['$scope', '$rootScope' , function ($scope, $r
 
   //Remove a player from sync
   function removeSync(playerId){
-    console.log('removeSync');
-    //{"id":1,"method":"slim.request","params":["d0:63:b4:00:23:cf",["sync","-"]]}
     $scope.JSONRPC({"id":1,"method":"slim.request","params":[playerId,["sync","-"]]}, function(xhr) {
-       console.log(xhr.response); 
+      
     });
   }
 
   //Sync 2 players
   function addSync(playerId, playerDestId){
-    console.log('addSync');
+    
     $scope.JSONRPC({"id":1,"method":"slim.request","params":[playerId,["sync",playerDestId]]}, function(xhr) {
-       console.log(xhr.response); 
+      
     });
   }
 
@@ -540,6 +538,9 @@ squeezefox.controller('SyncCtrl', ['$scope', '$rootScope' , function ($scope, $r
   };
 
   $scope.setSyncGroups = function setSyncGroups(playerId) {
+    //Toggle syncGroup
+    $scope.syncgroup[playerId] = !$scope.syncgroup[playerId];
+
     var playerDestId;
     var playersToSync = [];
     //Create playersToSync array
@@ -548,6 +549,9 @@ squeezefox.controller('SyncCtrl', ['$scope', '$rootScope' , function ($scope, $r
         playersToSync.push(k);
       }
     });
+
+    
+    
     if(playersToSync.length > 1){
       for(var i in playersToSync){
         if(playerDestId){
@@ -557,12 +561,10 @@ squeezefox.controller('SyncCtrl', ['$scope', '$rootScope' , function ($scope, $r
         playerDestId = playersToSync[i];
       }
     }
-    if(playersToSync.indexOf(playerId) !== -1){
+    if(playersToSync.indexOf(playerId) === -1){
       //Remove
       removeSync(playerId);
     }
-    console.log($scope.syncgroups,$scope.syncgroup, $scope.playersSyncs);
-    
   };
 }]);
 

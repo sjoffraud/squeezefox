@@ -216,8 +216,10 @@
           <section data-type="list">
             <header>Sync</header>
             <ul ng-show="playersSyncs">
-              <li ng-repeat="player in playersSyncs">
-                <label>{{player.name}}<input type="checkbox" ng-model="syncgroup[player.playerid]" ng-change="setSyncGroups()"/></label>
+              <li ng-repeat="player in playersSyncs" >
+                <a href="#" ng-click="setSyncGroups(player.playerid)" ng-class="{'active':syncgroup[player.playerid]}">
+                  <p>{{ player.name }}</p>
+                </a>
               </li>
             </ul>
             <div ng-hide="playersSyncs">

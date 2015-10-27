@@ -52,6 +52,9 @@ $("#drawer").style.overflowY = "scroll"; $("#drawer > header").style.position = 
 #drawer { overflow-y: scroll; }
 #drawer > header { position: fixed; width: 100%; }
 #drawer > header > span.playerPlaySelector select{ width: 50%; }
+li > a.active{
+  background-color: rgba(0,107,127,0.3);
+}
 #main { padding-top: 5rem; }
 
 
